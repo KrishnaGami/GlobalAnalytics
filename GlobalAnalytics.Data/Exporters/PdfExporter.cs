@@ -1,52 +1,68 @@
 ﻿using GlobalAnalytics.Lib.DTOs;
 using GlobalAnalytics.Lib.Interfaces;
+using log4net;
 using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 
 namespace GlobalAnalytics.Data.Exporters
 {
     public class PdfExporter : IExporter
     {
+        private readonly ILog _logger = LogManager.GetLogger(typeof(PdfExporter));
+
         public byte[] Export(List<ClientDto> data)
         {
-            var doc = Document.Create(container =>
+            _logger.Info($"Generating PDF export. Rows: {data.Count}");
+
+            try
             {
-                container.Page(page =>
+                var document = Document.Create(container =>
                 {
-                    page.Content().Table(table =>
+                    container.Page(page =>
                     {
-                        table.ColumnsDefinition(columns =>
+                        page.Margin(20);
+                        page.Header().Text("Client Report").FontSize(18).Bold().AlignCenter();
+                        page.Content().Table(table =>
                         {
-                            columns.RelativeColumn();
-                            columns.RelativeColumn();
-                            columns.RelativeColumn();
-                            columns.RelativeColumn();
+                            table.ColumnsDefinition(columns =>
+                            {
+                                for (int i = 0; i < 6; i++) columns.RelativeColumn();
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Text("Name").Bold();
+                                header.Cell().Text("Email").Bold();
+                                header.Cell().Text("Country").Bold();
+                                header.Cell().Text("Industry").Bold();
+                                header.Cell().Text("Revenue").Bold();
+                                header.Cell().Text("Active").Bold();
+                            });
+
+                            foreach (var client in data)
+                            {
+                                table.Cell().Text(client.Name);
+                                table.Cell().Text(client.Email);
+                                table.Cell().Text(client.Country);
+                                table.Cell().Text(client.Industry);
+                                table.Cell().Text(client.Revenue.ToString("C"));
+                                table.Cell().Text(client.IsActive ? "Yes" : "No");
+                            }
                         });
 
-                        table.Header(header =>
-                        {
-                            header.Cell().Element(CellStyle).Text("Name");
-                            header.Cell().Element(CellStyle).Text("Country");
-                            header.Cell().Element(CellStyle).Text("Revenue");
-                            header.Cell().Element(CellStyle).Text("CreatedDate");
-                        });
-
-                        foreach (var item in data)
-                        {
-                            table.Cell().Element(CellStyle).Text(item.Name);
-                            table.Cell().Element(CellStyle).Text(item.Country);
-                            table.Cell().Element(CellStyle).Text($"{item.Revenue}");
-                            table.Cell().Element(CellStyle).Text(item.CreatedDate.ToShortDateString());
-                        }
-
-                        IContainer CellStyle(IContainer container) =>
-                            container.Padding(5).BorderBottom(1).BorderColor(Colors.Grey.Lighten2);
+                        page.Footer().Text($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}").FontSize(10).AlignRight();
                     });
                 });
-            });
 
-            return doc.GeneratePdf();
+                var stream = new MemoryStream();
+                document.GeneratePdf(stream);
+                _logger.Info("PDF export generation completed.");
+                return stream.ToArray();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error during PDF export.", ex);
+                return Array.Empty<byte>();
+            }
         }
     }
 }

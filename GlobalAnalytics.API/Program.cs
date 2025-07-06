@@ -5,12 +5,20 @@ using GlobalAnalytics.Data.Factories;
 using GlobalAnalytics.Data.Repositories;
 using GlobalAnalytics.Data.Services;
 using GlobalAnalytics.Lib.Interfaces;
+using log4net.Config;
+using log4net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
+using System.Reflection;
 using System.Text;
+using GlobalAnalytics.API.ErrorHandling;
+
+// Load log4net config at the start of Main
+var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +100,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

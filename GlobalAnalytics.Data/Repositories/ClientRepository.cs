@@ -1,7 +1,9 @@
 ﻿using GlobalAnalytics.Core.Entities;
 using GlobalAnalytics.Core.Filters;
 using GlobalAnalytics.Core.Models;
+using GlobalAnalytics.Data.Services;
 using GlobalAnalytics.Lib.Interfaces;
+using log4net;
 using Microsoft.EntityFrameworkCore;
 
 namespace GlobalAnalytics.Data.Repositories
@@ -9,7 +11,7 @@ namespace GlobalAnalytics.Data.Repositories
     public class ClientRepository : IClientRepository
     {
         private readonly AppDbContext _context;
-
+        private readonly ILog _logger = LogManager.GetLogger(typeof(ClientService));
         public ClientRepository(AppDbContext context)
         {
             _context = context;
