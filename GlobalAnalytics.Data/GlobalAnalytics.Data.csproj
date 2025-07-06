@@ -24,4 +24,8 @@
     <ProjectReference Include="..\GlobalAnalytics.Lib\GlobalAnalytics.Lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DependencyInjection\" />
+  </ItemGroup>
+
 </Project>
