@@ -1,0 +1,21 @@
+﻿# Ignore Git metadata
+.git
+.gitignore
+
+# Ignore build outputs
+bin/
+obj/
+*.dll
+*.pdb
+*.log
+
+# Ignore test results
+TestResults/
+.vscode/
+*.user
+*.suo
+
+# Ignore Docker cache and other workspace files
+Dockerfile
+.dockerignore
+*.md
