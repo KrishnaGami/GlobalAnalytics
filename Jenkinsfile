@@ -44,10 +44,15 @@ pipeline {
         }
 
         stage('Docker Run') {
-            steps {
-                bat 'docker run -d -p 8080:80 --name globalanalytics-api globalanalytics-api'
-            }
-        }
+			steps {
+				// Optional cleanup
+				bat 'docker rm -f globalanalytics-api || exit 0'
+
+				// Run on free port
+				bat 'docker run -d -p 8081:80 --name globalanalytics-api globalanalytics-api'
+			}
+		}
+
     }
 
     post {
