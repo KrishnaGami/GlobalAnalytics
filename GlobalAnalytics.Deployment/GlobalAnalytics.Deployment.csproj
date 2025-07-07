@@ -8,16 +8,15 @@
 
   <ItemGroup>
     <Compile Remove="Dockerfile\**" />
+    <Compile Remove="jenkins\**" />
     <EmbeddedResource Remove="Dockerfile\**" />
+    <EmbeddedResource Remove="jenkins\**" />
     <None Remove="Dockerfile\**" />
+    <None Remove="jenkins\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Dockerfile.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="jenkins\" />
   </ItemGroup>
 
 </Project>

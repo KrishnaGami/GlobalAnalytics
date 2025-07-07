@@ -39,7 +39,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'docker build --progress=plain -t globalanalytics-api -f GlobalAnalytics.Deployment/Dockerfile ./GlobalAnalytics.API'
+                bat 'docker build --progress=plain -t globalanalytics-api -f GlobalAnalytics.Deployment/Dockerfile .'
             }
         }
 
